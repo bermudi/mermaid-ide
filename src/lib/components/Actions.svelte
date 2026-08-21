@@ -9,7 +9,6 @@
   import * as ToggleGroup from '$/components/ui/toggle-group';
   import { TID } from '$/constants';
   import { getDomain } from '$/util/util';
-  import { browser } from '$app/environment';
   import { waitForRender } from '$lib/util/autoSync';
   import { inputState, updateCodeStore, urls, validatedState } from '$lib/util/state.svelte';
   import { logEvent } from '$lib/util/stats';
@@ -246,8 +245,6 @@ ${svgString}`);
   });
 
   let imageSize = $state(1080);
-
-  const isNetlify = browser && window.location.host.includes('netlify');
 </script>
 
 {#snippet dualActionButton(text: string, download: (event: Event) => unknown, url?: string)}
@@ -312,12 +309,5 @@ ${svgString}`);
       <Input type="url" bind:value={gistURL} placeholder="Enter Gist URL" />
       <Button onclick={loadGist}>Load Gist</Button>
     </div>
-    {#if isNetlify}
-      <div class="flex w-full items-center justify-center">
-        <a class="link text-sm text-gray-500 underline" href="https://netlify.com">
-          This site is powered by Netlify
-        </a>
-      </div>
-    {/if}
   </div>
 </Card>
