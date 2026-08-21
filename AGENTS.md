@@ -5,7 +5,7 @@
 Fork of `mermaid-js/mermaid-live-editor`, deployed as `mermaid-ide`.
 
 - **Netlify deployment fixed:** upstream `netlify.toml` lacked `[build]` — added `command = "pnpm build"` / `publish = "docs"` so `netlify deploy --build` works locally and in CI. Without this, CLI builds failed with `vite: command not found` / `node_modules missing`.
-- **Deployed site:** `mermaid-ide` — https://mermaid-ide.netlify.app — project ID `4caf4ccb-f0d1-4271-b04b-23dff44a23b9` (team `bermudi's team`). Linked via `.netlify/state.json`; `.netlify` is now gitignored.
+- **Deployed site:** `mermaid-ide` — https://mermaid-ide.netlify.app — project ID `4caf4ccb-f0d1-4271-b04b-23dff44a23b9` (team `bermudi's team`). **Auto-deploys from GitHub:** Netlify builds `main` of `bermudi/mermaid-ide` on every push (repo-linked via Netlify GitHub App; deploy history carries commit hashes). `.netlify/state.json` is only for local CLI access; `.netlify` is gitignored.
 - **`docs/` is build output:** `pnpm build` writes static site to `docs/` via `@sveltejs/adapter-static` (fallback `404.html` for SPA routing). Never edit `docs/` directly.
 - **Promo / upsell removed:** `MERMAID_IS_ENABLED_MERMAID_CHART_LINKS` set to `'false'` in `netlify.toml` (disables Mermaid Chart banner + Save-diagram promos). Editor chooser modal (`src/routes/(app)/edit/+page.svelte` + `EditorChooserModal.svelte` + `domainMigration.ts:shouldShowEditorChooser()`) hard-disabled (`return false`) and unmounted — no more "Try the full Mermaid experience" on first visit.
 - **Netlify badge removed:** `src/lib/components/Actions.svelte` "This site is powered by Netlify" block deleted + Netlify site settings `built_with_badge_enabled: false` and `hud_enabled: false` via API (previously injected floating "Powered by Netlify" badge and `/.netlify/scripts/hud`).
@@ -56,7 +56,8 @@ pnpm check            # svelte-check
 pnpm lint / lint:fix
 pnpm test:unit        # vitest; single file: pnpm vitest run src/lib/util/serde.test.ts
 pnpm test:e2e         # playwright, auto-starts dev server
-netlify deploy --prod # builds + deploys to mermaid-ide (already linked)
+git push             # push to main = Netlify auto-builds & deploys
+netlify deploy --prod # manual fallback only; builds local working tree, no commit provenance
 ```
 
 HMR is disabled (full reload by design). Copy `.env` to `.env.local` for overrides.
