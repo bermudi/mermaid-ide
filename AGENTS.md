@@ -9,6 +9,7 @@ Fork of `mermaid-js/mermaid-live-editor`, deployed as `mermaid-ide`.
 - **`docs/` is build output:** `pnpm build` writes static site to `docs/` via `@sveltejs/adapter-static` (fallback `404.html` for SPA routing). Never edit `docs/` directly.
 - **Promo / upsell removed:** `MERMAID_IS_ENABLED_MERMAID_CHART_LINKS` set to `'false'` in `netlify.toml` (disables Mermaid Chart banner + Save-diagram promos). Editor chooser modal (`src/routes/(app)/edit/+page.svelte` + `EditorChooserModal.svelte` + `domainMigration.ts:shouldShowEditorChooser()`) hard-disabled (`return false`) and unmounted — no more "Try the full Mermaid experience" on first visit.
 - **Netlify badge removed:** `src/lib/components/Actions.svelte` "This site is powered by Netlify" block deleted + Netlify site settings `built_with_badge_enabled: false` and `hud_enabled: false` via API (previously injected floating "Powered by Netlify" badge and `/.netlify/scripts/hud`).
+- **Navigation declutter:** `MainMenu.svelte` external links removed (Mermaid.js / Documentation / Community-Discord), `Navbar.svelte` GitHub dropdown + separator removed, `edit/+page.svelte` `Preset` (sample diagrams) unmounted — minimal IDE, fewer upstream promo surfaces to maintain.
 
 ## Remotes & branches
 
