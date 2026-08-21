@@ -14,17 +14,18 @@ Fork of `mermaid-js/mermaid-live-editor`, deployed as `mermaid-ide`.
 
 - `origin` → `git@github.com:bermudi/mermaid-ide.git` — the fork, push here
 - `upstream` → `https://github.com/mermaid-js/mermaid-live-editor.git` — read-only source of truth
-- `main` — **work happens here**; carries this fork's changes; what Netlify deploys; tracks `origin/main`
-- `develop` — pristine mirror of upstream's default branch; tracks `upstream/develop`; fast-forward only, **never commit here**
+- `main` — the only local branch; carries this fork's changes; what Netlify deploys; tracks `origin/main`
+- `upstream/develop` — read-only pointer to upstream's tip; moved only by `git fetch upstream`; no local mirror branch (a local `develop` would be a hand-cranked copy of it that can drift)
 
 Sync with upstream:
 
 ```sh
 git fetch upstream
-git switch develop && git merge --ff-only upstream/develop
-git switch main && git merge develop
-git push origin main develop
+git switch main && git merge upstream/develop
+git push
 ```
+
+To contribute a fix back upstream later: `git switch -c fix/whatever upstream/develop`.
 
 (Clone is shallow. If history-sensitive git ops misbehave: `git fetch --unshallow upstream`.)
 
