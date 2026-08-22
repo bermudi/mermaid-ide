@@ -1,5 +1,6 @@
 <script lang="ts">
   import Actions from '$/components/Actions.svelte';
+  import AiSettings from '$/components/AiSettings.svelte';
   import Card from '$/components/Card/Card.svelte';
   import DiagramDocButton from '$/components/DiagramDocumentationButton.svelte';
   import Editor from '$/components/Editor.svelte';
@@ -128,6 +129,7 @@
             </Card>
 
             <div class="group flex flex-wrap justify-between gap-4 sm:gap-6">
+              <AiSettings />
               <Actions />
             </div>
           </div>

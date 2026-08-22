@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { EditorProps } from '$/types';
   import { env } from '$/util/env';
-  import { urls, validatedState } from '$/util/state.svelte';
-  import { logMermaidChartClick } from '$/util/stats';
+  import { updateCode, validatedState } from '$/util/state.svelte';
+  import { aiState, editDiagram } from '$/util/ai.svelte';
   import { AIPromptViewZoneManager } from '$lib/util/AIPromptViewZoneManager';
   import { initEditor } from '$lib/util/monacoExtra';
   import { errorDebug } from '$lib/util/util';
@@ -33,6 +33,8 @@
   let decorationsCollection: monaco.editor.IEditorDecorationsCollection | undefined;
   let input = $state('');
   let lastMouseLine = 0;
+  let isAiLoading = $state(false);
+  let aiError = $state<string | null>(null);
   const aiPromptManager = new AIPromptViewZoneManager();
 
   const applyEditorTheme = (currentMode: typeof mode.current) => {
@@ -99,6 +101,23 @@
       aiPromptManager.hide();
     }
     renderAIPromptGutterGlyphIcon();
+  };
+
+  const handleAiEdit = async () => {
+    if (!input.trim() || !aiState.hasKey) return;
+    isAiLoading = true;
+    aiError = null;
+    try {
+      const code = validatedState.current.code;
+      const updated = await editDiagram(code, input);
+      updateCode(updated, { updateDiagram: true });
+      closePopup();
+    } catch (e) {
+      aiError = e instanceof Error ? e.message : String(e);
+      console.error(e);
+    } finally {
+      isAiLoading = false;
+    }
   };
 
   onMount(() => {
@@ -238,17 +257,15 @@
     <AIPromptPopup
       show={showPopup}
       bind:input
+      isLoading={isAiLoading}
       onHeightChange={(height) => aiPromptManager.updateHeight(height)}
       onClose={closePopup}
-      onTryFree={() => {
-        logMermaidChartClick('vibeDiagramming');
-        window.open(
-          urls.current.mermaidChart({ medium: 'vibe_diagramming' }).save,
-          '_blank',
-          'noopener'
-        );
-        closePopup();
-      }} />
+      onTryFree={handleAiEdit} />
+    {#if aiError}
+      <div class="absolute top-full mt-1 rounded bg-destructive px-2 py-1 text-xs text-white">
+        {aiError}
+      </div>
+    {/if}
   </div>
 </div>
 

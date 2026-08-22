@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from '$/components/ui/button';
   import { cn } from '$lib/utils.js';
+  import { aiState } from '$/util/ai.svelte';
   import CloseIcon from '~icons/material-symbols/close-rounded';
 
   interface Props {
@@ -9,9 +10,17 @@
     onClose: () => void;
     onHeightChange?: (height: number) => void;
     onTryFree: () => void;
+    isLoading?: boolean;
   }
 
-  let { show, input = $bindable(), onClose, onHeightChange, onTryFree }: Props = $props();
+  let {
+    show,
+    input = $bindable(),
+    onClose,
+    onHeightChange,
+    onTryFree,
+    isLoading = false
+  }: Props = $props();
 
   let textarea = $state<HTMLTextAreaElement>();
   let container = $state<HTMLDivElement>();
@@ -84,7 +93,7 @@
         onkeydown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            if (input.trim()) {
+            if (input.trim() && aiState.hasKey && !isLoading) {
               onTryFree();
             }
           }
@@ -99,12 +108,18 @@
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="font-recursive text-xs font-normal text-foreground dark:text-foreground"
-        >Sign Up at Mermaid.ai to try AI</span>
+      <span class="font-recursive text-xs font-normal text-foreground dark:text-foreground">
+        {#if aiState.hasKey}
+          Edit via {aiState.model}
+        {:else}
+          Enter Gateway key in AI panel
+        {/if}
+      </span>
       <Button
         class="font-recursive h-6 w-16 gap-1.5 rounded-sm bg-accent p-1 text-xs font-medium text-white no-underline hover:bg-accent/90 hover:text-white hover:no-underline active:bg-accent/80 dark:bg-accent dark:text-white! dark:hover:bg-accent/90 dark:active:bg-accent/80"
+        disabled={!input.trim() || isLoading || !aiState.hasKey}
         onclick={onTryFree}>
-        Try free
+        {isLoading ? '...' : 'Apply'}
       </Button>
     </div>
   </div>
