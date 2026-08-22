@@ -3,7 +3,7 @@ import { generateText } from 'ai';
 
 const STORAGE_KEY = 'mermaid-ai-gateway-key';
 const MODEL_KEY = 'mermaid-ai-model';
-export const DEFAULT_MODEL = 'openai/gpt-4o-mini';
+export const DEFAULT_MODEL = 'xai/grok-4.6';
 
 export const aiState = $state({
   hasKey: typeof window !== 'undefined' ? !!localStorage.getItem(STORAGE_KEY) : false,
