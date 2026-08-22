@@ -59,6 +59,20 @@ let lastDiagramType = '';
 const processState = async (state: State) => {
   const processed = validatedStateOf(state, '');
   // No changes should be done to fields part of `state`.
+  // Empty diagram is valid — don't show a syntax error for a blank canvas.
+  if (!state.code.trim()) {
+    processed.serialized = serializeState(state);
+    processed.diagramType = undefined;
+    processed.error = undefined;
+    processed.errorMarkers = [];
+    try {
+      JSON.parse(state.mermaid);
+    } catch (error) {
+      processed.error = error as Error;
+      console.error(error);
+    }
+    return processed;
+  }
   try {
     processed.serialized = serializeState(state);
     const { diagramType } = await parse(state.code);
